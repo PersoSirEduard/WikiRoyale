@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="styles/index.css">
+        <script src="js/config.js"></script>
+        <script src="js/index.js"></script>
+        <title>WikiRoyale</title>
+    </head>
+    <body>
+
+        <div class="full-container">
+
+            <iframe class="background-iframe" src="https://en.wikipedia.org/wiki/Special:Random" frameborder="0" scrolling="no"></iframe>
+
+            <div id="alert" class="alert">
+                <p id='alert-msg' class="center" style="flex: 1;"><strong>Error!</strong> Could not connect to the server!</p>
+                <span class="closebtn" onclick="this.parentElement.style.height='0px';">&times;</span> 
+            </div>
+
+            <div class="form-container center">
+                <div id='loader' class="loading-overlay">
+                    <img src='assets/tail-spin.svg' class="center"></img>
+                </div>
+                <img src="assets/logo.png" width="230px"></img>
+                <div class="typewriter">
+                    <p>The Free <a style="text-decoration: none;" href='https://en.wikipedia.org/'>Wikipedia</a> Battle Royale?</p>
+                </div>
+                <input type="text" id="user-input-box" class="input-box" placeholder="Username">
+                <input type="text" id="id-input-box" class="input-box" onkeyup="OnKeyUp_IdInputBox()" placeholder="Game ID">
+                
+                <label id='is-private-label' class="lbl active">Is Private?
+                   <input id='is-private' type="checkbox"> 
+                </label>
+
+                <a href="#" id='random-btn' class="a-ref" onclick="OnClick_RandomBtn()">Or join a random game (DISABLED)</a>
+                <button id='create-btn' class="btn active" onclick="OnClick_CreateBtn()">Create Game</button>
+                <button id='join-btn' class="btn" onclick="OnClick_JoinBtn()">Join Game</button>
+
+                <p class="credits">Created by Eduard A.</p>
+            </div>
+
+        </div>
+
+    </body>
+</html>

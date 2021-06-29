@@ -1,0 +1,127 @@
+@font-face {
+    font-family: Hoelfer;
+    src: url('../assets/Hoefler Text Regular.ttf');
+}
+
+* {
+    font-family: Hoelfer;
+}
+
+body {
+    margin: 0;
+}
+
+.center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.full-container {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.background-iframe {
+    overflow: hidden;
+    z-index: -1;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    filter: blur(4px);
+}
+
+.error-msg {
+    text-align: center;
+    font-size: larger;
+}
+
+.form-container {
+    background-color: white;
+    width: 500px;
+    height: 600px;
+    border-style: solid;
+    border-color: #adb3ba;
+    border-radius: 3px;
+    border-width: 1px;
+    padding: 20px 20px 5px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes zoom-in {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+@keyframes zoom-out {
+    from { transform: scale(1); }
+    to { transform: scale(0); }
+}
+
+.list-box {
+    overflow-y: auto;
+    background-color: white;
+    border-style: none;
+    width: 300px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.list-box-item {
+    margin: 0;
+    width: 100%;
+    background-color: white;
+    border-style: none;
+    height: 50px;
+    text-align: center;
+    transition-duration: 0.4s;
+    user-select: none;
+}
+
+.list-box-item:hover {
+    background-color: lightgray;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#welcome-user {
+    font-size: x-large;
+    margin-bottom: 0;
+}
+
+#role-msg {
+    font-size: small;
+    display: none;
+    margin-top: 0;
+    transition-duration: 0.4;
+}
+
+.btn {
+    background-color: transparent;
+    border: solid;
+    color: black;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: transparent;
+    font-size: large;
+}
+
+.btn:hover {
+    border-color: black;
+}

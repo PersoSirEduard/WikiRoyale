@@ -1,0 +1,1 @@
+const SERVER_IP = "localhost:8081/"

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="styles/play.css">
+        <script src="js/config.js"></script>
+        <script src="js/play.js"></script>
+        <title>WikiRoyale</title>
+    </head>
+    <body>
+        <div id='error-container' class="full-container" style="display: none;">
+
+            <iframe class="background-iframe" src="https://en.wikipedia.org/wiki/HTTP_404" frameborder="0" scrolling="no"></iframe>
+
+            <div class="error-msg center">
+                <p id="error-msg">Error: Could not connect to the server or the session is invalid.</p>
+                <a href="/">Go back to the main page.</a>
+            </div>
+            
+        </div>
+        <div id='valid-container' class="full-container">
+
+            <iframe class="background-iframe" src="https://en.wikipedia.org/wiki/Special:Random" frameborder="0" scrolling="no"></iframe>
+
+            <div class="form-container center">
+                <p id="welcome-user">Welcome, player!</p>
+                <p id="role-msg">You are now the master of this session. You can double click on any player to kick them.</p>
+                <div id="player-list" class="list-box center">
+                    
+                </div>
+                <button id="begin-btn" class="btn" style="margin-top: 450px;" onclick="onClick_BeginBtn()">Begin game</button>
+            </div>
+
+        </div>
+    </body>
+</html>
