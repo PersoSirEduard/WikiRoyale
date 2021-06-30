@@ -81,6 +81,32 @@ function onClick_BeginBtn() {
     }
 }
 
+function updateState(_state, error="") {
+    state = _state;
+
+    document.getElementById('lobby-container').style.display = 'none';
+    document.getElementById('error-container').style.display = 'none';
+    document.getElementById('error-msg').innerHTML = error;
+
+    switch (state) {
+        case "lobby":
+            document.getElementById('lobby-container').style.display = 'block';
+            break;
+        
+        case "playing":
+            break;
+
+        case "error":
+            document.getElementById('error-container').style.display = 'block';
+            document.getElementById('error-msg').innerHTML = error;
+            break;
+
+        default:
+            break;
+    }
+
+}
+
 window.addEventListener('DOMContentLoaded', (event) => {
     // Get url params
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -115,6 +141,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 updateRole(data.value);
                 break;
 
+            // Disconnect the user
+            case "disconnect":
+                socket.close(data.value);
+                break;
+
+            // Set the game state
+            case "set_state":
+                updateState(data.value);
+                break;
+            
             // Unknown command
             default:
                 break;
@@ -123,19 +159,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     // On error event
     socket.onerror = function(event) {
+
         // Disable game container and display error
-        document.getElementById('valid-container').style.display = 'none';
-        document.getElementById('error-container').style.display = 'block';
-        document.getElementById('error-msg').innerHTML = "Error: Could not connect to the server or the session is invalid.";
+        updateState("error", "Error: Could not connect to the server or the session is invalid.");
     }
 
     // On close event
     socket.close = function(event) {
+        
         // Disable game container and display error
-        document.getElementById('valid-container').style.display = 'none';
-        document.getElementById('error-container').style.display = 'block';
-        document.getElementById('error-msg').innerHTML = "Oups, it seems that you got disconnected.";
-
+        updateState("error", event);
     }
 
     // Begin setup
