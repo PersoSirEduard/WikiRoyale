@@ -22,7 +22,7 @@ class Game {
 
         // First player becomes master
         if (session.getClientCount() == 1) {
-            this.master = session.getClientAddress(request);
+            this.master = session.getClientAddress(ws);
             session.send(ws, "set_role", "master");
         }
 
@@ -50,7 +50,7 @@ class Game {
 
             case "kick": // Kick is a lobby command
                 if (this.state == "lobby") {
-                    var playerIP = session.getClientAddressWS(ws);
+                    var playerIP = session.getClientAddress(ws);
                     
                     if (playerIP === this.master) { // Verify if the player is the master of the session
                         var playerToKick = data.value;
@@ -58,12 +58,26 @@ class Game {
                         for (const client of session.socket.clients) {
                             
                             if (playerToKick === client.username) {
-                                // Force kick player (this is temporary)
-                                client._socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+                                // Force kick player
+                                session.send(client, "disconnect", "You got kicked by the server.");
+                                // Create error client
+                                // client._socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
                                 client.close(); // Close player socket
                                 break;
                             }
                         }
+                    }
+                }
+                break;
+
+            // Start game 'lobby' -> 'playing'
+            case "start_game":
+                if (this.state == "lobby") {
+                    var playerIP = session.getClientAddress(ws);
+
+                    if (playerIP === this.master) { // Verify if the player is the master of the session
+                        this.state = 'playing'; // Playing state
+                        session.sendAll("set_state", "playing");
                     }
                 }
                 break;
@@ -80,7 +94,7 @@ class Game {
         console.log(`${ws.username} left the session ${session.name}.`)
 
         // Get new master
-        if (this.master === session.getClientAddress(request)) {
+        if (this.master === session.getClientAddress(ws)) {
             
             if (session.getClientCount() == 0) {
                 // No more players left
@@ -96,7 +110,7 @@ class Game {
                     break;
                 }
 
-                this.master = session.getClientAddressWS(newMaster);
+                this.master = session.getClientAddress(newMaster);
                 // Send update to new master
                 session.send(newMaster, "set_role", "master");
             }

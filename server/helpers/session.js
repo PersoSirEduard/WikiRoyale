@@ -72,11 +72,7 @@ class Session {
         }, 600000); // Max 10 mins of inactivity
     }
 
-    getClientAddress(request) { // using request
-        return `${request.socket.remoteAddress}:${request.socket.remotePort}`;
-    }
-
-    getClientAddressWS(ws) {
+    getClientAddress(ws) {
         return `${ws._socket.remoteAddress}:${ws._socket.remotePort}`;
     }
 
