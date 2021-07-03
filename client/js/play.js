@@ -5,6 +5,9 @@ var role = "user";
 var username = "";
 var socket = false;
 
+var startWiki = "";
+var endWiki = "";
+
 function setup(params) {
 
     // Username setup
@@ -81,11 +84,35 @@ function onClick_BeginBtn() {
     }
 }
 
+async function updateWikiObjectives(objectives) {
+    startWiki = objectives.initial;
+    endWiki = objectives.destination;
+
+    var startPage = await getPage(startWiki);
+    console.log(startPage)
+    console.log(startPage.parse)
+}
+
+async function getPage(url) {
+    return new Promise((resolve, reject) => {
+        var pageName = url.split("/").pop();
+        fetch(`https://en.wikipedia.org/w/api.php?action=parse&page=${pageName}&prop=text&formatversion=2&origin=*&format=json`).then((res) => {
+            resolve(res.json());
+        }).catch((err) => {
+            console.log(err);
+            reject({});
+        });
+    })
+}
+
 function updateState(_state, error="") {
     state = _state;
 
-    document.getElementById('lobby-container').style.display = 'none';
-    document.getElementById('error-container').style.display = 'none';
+    // Hide every page
+    for (var tab of document.querySelector('body').children) {
+        tab.style.display = "none"
+    }
+
     document.getElementById('error-msg').innerHTML = error;
 
     switch (state) {
@@ -93,7 +120,8 @@ function updateState(_state, error="") {
             document.getElementById('lobby-container').style.display = 'block';
             break;
         
-        case "playing":
+        case "playing_idle":
+            document.getElementById('menu-container').style.display = 'block';
             break;
 
         case "error":
@@ -117,6 +145,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         socket = new WebSocket(`ws://${SERVER_IP}session/${params.join}?user=${params.user}`, "protocolOne");
     } catch (err) { 
         console.log(err);
+        updateState('error', 'Session has timed out.')
     }
     
     // On open event
@@ -149,6 +178,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
             // Set the game state
             case "set_state":
                 updateState(data.value);
+                break;
+
+            // Update wikipedia objectives
+            case "wiki_objectives":
+                updateWikiObjectives(JSON.parse(data.value))
                 break;
             
             // Unknown command
