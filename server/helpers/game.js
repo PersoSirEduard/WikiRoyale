@@ -10,6 +10,7 @@ class Game {
         this.state = "lobby";
         this.master = "";
         this.currentLvl = 1;
+        this.objectives = {};
 
         setInterval(() => {this.gameLoop(session)}, 50); // Game loop
     }
@@ -35,7 +36,7 @@ class Game {
 
     }
 
-    onMessage(session, ws, request, message) {
+    async onMessage(session, ws, request, message) {
         var data = {command: "", value: ""}; // Default value
 
         try {
@@ -70,14 +71,19 @@ class Game {
                 }
                 break;
 
-            // Start game 'lobby' -> 'playing'
+            // Start game 'lobby' -> 'playing_idle'
             case "start_game":
                 if (this.state == "lobby") {
                     var playerIP = session.getClientAddress(ws);
 
                     if (playerIP === this.master) { // Verify if the player is the master of the session
-                        this.state = 'playing'; // Playing state
-                        session.sendAll("set_state", "playing");
+                        this.state = 'playing_idle'; // Playing state
+                        session.sendAll("set_state", "playing_idle");
+                        
+                        var objectives = await this.getWikiObjectives(3);
+                        this.objectives = objectives;
+
+                        session.sendAll("wiki_objectives", JSON.stringify(this.objectives));
                     }
                 }
                 break;
@@ -141,7 +147,7 @@ class Game {
         return players;
     }
 
-    getPage(url) {
+    async getPage(url) {
         return new Promise((resolve, reject) => {
             request(url, function (error, response, body) {
                 if (error) reject(error);
@@ -152,8 +158,8 @@ class Game {
 
     async getWikiObjectives(difficulty = 1) {
         var page = await this.getPage('https://en.wikipedia.org/wiki/Special:Random');
-        var initial = page.response.uri
-
+        var initial = page.response.request.uri.href
+        
         var destination = initial;
         for (var level = 0; level < difficulty; level++) {
 
@@ -161,11 +167,15 @@ class Game {
 
             const $ = cheerio.load(desPage.body);
 
-            var links = $('#mw-content-text a').filter((i, link) => {
-                return $(this).attr('href').includes('/wiki/');
-            }).attr('href');
+            var links = [];
+            $('#mw-content-text a').filter((i, link) => {
+                var href = link.attribs.href;
+                if (href != undefined && href.includes('/wiki/') && !href.includes("https://") && !href.includes("File:") && !href.includes("Special:") && !href.includes("Help:") && !href.includes("Wikipedia:")) {
+                    links.push(href)
+                }
+            })
 
-            destination = 'https://en.wikipedia.org' + links[Math.floor(Math.random() * link.length)];
+            destination = 'https://en.wikipedia.org' + links[Math.floor(Math.random() * links.length)];
             
         }
 
